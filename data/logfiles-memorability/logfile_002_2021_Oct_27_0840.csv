@@ -1,0 +1,10 @@
+,TimeStamp,ID,Age,Gender,Language,Stimulus,Orientation,BlankSpace,Complexity,Noise,Reaction_time,Screenshot_name
+0,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o1_b1_c3_n2,1,1,3,2,92.07727030000024,screenshots/screenshot_stimulus_o1_b1_c3_n2_002_2021_Oct_27_0840.png
+1,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o2_b1_c3_n2,2,1,3,2,81.4197352000001,screenshots/screenshot_stimulus_o2_b1_c3_n2_002_2021_Oct_27_0840.png
+2,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o1_b2_c1_n3,1,2,1,3,45.173321000000215,screenshots/screenshot_stimulus_o1_b2_c1_n3_002_2021_Oct_27_0840.png
+3,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o2_b3_c3_n1,2,3,3,1,48.28647329999967,screenshots/screenshot_stimulus_o2_b3_c3_n1_002_2021_Oct_27_0840.png
+4,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o1_b1_c3_n1,1,1,3,1,81.82416990000002,screenshots/screenshot_stimulus_o1_b1_c3_n1_002_2021_Oct_27_0840.png
+5,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o1_b3_c3_n2,1,3,3,2,58.4167180000004,screenshots/screenshot_stimulus_o1_b3_c3_n2_002_2021_Oct_27_0840.png
+6,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o1_b1_c1_n2,1,1,1,2,32.621163400000114,screenshots/screenshot_stimulus_o1_b1_c1_n2_002_2021_Oct_27_0840.png
+7,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o2_b2_c3_n1,2,2,3,1,63.71089599999959,screenshots/screenshot_stimulus_o2_b2_c3_n1_002_2021_Oct_27_0840.png
+8,2021_Oct_27_0840,002,26,male,vietnamese,stimulus_o1_b1_c2_n1,1,1,2,1,76.14756100000068,screenshots/screenshot_stimulus_o1_b1_c2_n1_002_2021_Oct_27_0840.png

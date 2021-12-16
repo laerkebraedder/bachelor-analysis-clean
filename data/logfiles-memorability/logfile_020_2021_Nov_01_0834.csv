@@ -1,0 +1,15 @@
+,TimeStamp,ID,Age,Gender,Language,Stimulus,Orientation,BlankSpace,Complexity,Noise,Reaction_time,Screenshot_name
+0,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b3_c2_n2,2,3,2,2,58.1954369999994,screenshots/screenshot_stimulus_o2_b3_c2_n2_020_2021_Nov_01_0834.png
+1,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b3_c3_n1,2,3,3,1,87.80073470000025,screenshots/screenshot_stimulus_o2_b3_c3_n1_020_2021_Nov_01_0834.png
+2,2021_Nov_01_0834,020,25,male,dansk,stimulus_o1_b1_c2_n2,1,1,2,2,56.66955700000017,screenshots/screenshot_stimulus_o1_b1_c2_n2_020_2021_Nov_01_0834.png
+3,2021_Nov_01_0834,020,25,male,dansk,stimulus_o1_b3_c2_n1,1,3,2,1,58.76953390000017,screenshots/screenshot_stimulus_o1_b3_c2_n1_020_2021_Nov_01_0834.png
+4,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b3_c1_n2,2,3,1,2,86.02374039999995,screenshots/screenshot_stimulus_o2_b3_c1_n2_020_2021_Nov_01_0834.png
+5,2021_Nov_01_0834,020,25,male,dansk,stimulus_o1_b1_c1_n2,1,1,1,2,88.36523679999937,screenshots/screenshot_stimulus_o1_b1_c1_n2_020_2021_Nov_01_0834.png
+6,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b3_c3_n3,2,3,3,3,76.04284769999958,screenshots/screenshot_stimulus_o2_b3_c3_n3_020_2021_Nov_01_0834.png
+7,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b3_c1_n3,2,3,1,3,27.22380989999965,screenshots/screenshot_stimulus_o2_b3_c1_n3_020_2021_Nov_01_0834.png
+8,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b1_c2_n3,2,1,2,3,54.48554160000003,screenshots/screenshot_stimulus_o2_b1_c2_n3_020_2021_Nov_01_0834.png
+9,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b2_c2_n3,2,2,2,3,37.19469179999942,screenshots/screenshot_stimulus_o2_b2_c2_n3_020_2021_Nov_01_0834.png
+10,2021_Nov_01_0834,020,25,male,dansk,stimulus_o1_b1_c2_n1,1,1,2,1,44.25720999999976,screenshots/screenshot_stimulus_o1_b1_c2_n1_020_2021_Nov_01_0834.png
+11,2021_Nov_01_0834,020,25,male,dansk,stimulus_o1_b2_c2_n1,1,2,2,1,102.34366859999955,screenshots/screenshot_stimulus_o1_b2_c2_n1_020_2021_Nov_01_0834.png
+12,2021_Nov_01_0834,020,25,male,dansk,stimulus_o2_b2_c3_n1,2,2,3,1,52.395520699999906,screenshots/screenshot_stimulus_o2_b2_c3_n1_020_2021_Nov_01_0834.png
+13,2021_Nov_01_0834,020,25,male,dansk,stimulus_o1_b3_c1_n2,1,3,1,2,6.639999992330559e-05,screenshots/screenshot_stimulus_o1_b3_c1_n2_020_2021_Nov_01_0834.png

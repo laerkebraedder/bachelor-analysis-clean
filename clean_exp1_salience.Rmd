@@ -1,0 +1,282 @@
+---
+title: "Experiment 1: Salience"
+author: "Lærke Brædder"
+date: "12/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Analysis of sub-experiment 1, salience. We want to analyze the time it takes for the image to emerge (rt) as a function of the three compositional dimensions: Blank space (b), noise (n), and complexity (c).
+
+## Loading data and libraries
+```{r Loading data and packages}
+pacman::p_load(tidyverse,
+               lmerTest,
+               brms,
+               fitdistrplus, # xxx Double check if you actually need these last three. What do they do?
+               ggbeeswarm,
+               svglite)
+
+# Loading the logfiles and binding them into one big data frame:
+filePaths1 <- list.files("data/logfiles-salience/", "\\.csv$", full.names = TRUE)
+dfs <- do.call(rbind, lapply(filePaths1, read.csv))
+
+# Cleaning the data up a little:
+dfs <- dfs %>% rename(RT = Reaction_time) #Renaming the reaction time variable to RT
+dfs <- subset(dfs, RT > 0.2) # Removing impossibly fast rt's.
+dfs$Correct <- as.factor(dfs$Correctness) #Creating a new column for correctness where it is a factor. The factor column is named 'Correct'
+dfs <- subset(dfs,dfs$Correct == 1) #Removing incorrect responses from the df. 
+dfs$ID <- as.factor(dfs$ID)
+
+dfs <- subset(dfs, ID != 014)
+dfs <- subset(dfs, ID != 017)
+
+dfs$Complexity <- ordered(dfs$Complexity) 
+dfs$Noise <- ordered(dfs$Noise)
+dfs$BlankSpace <- ordered(dfs$BlankSpace)
+
+
+mean(table(dfs$Stimulus))
+min(table(dfs$Stimulus))# Each stimulus appears an average of 80.5 times, and no Stimulus is showed less than 79 times. This is backing for using Stimulus as random intercept to account for repeated measures.
+```
+
+
+### Is RT affected by the compositional dimensions?
+models: 
+ - "s" stands for salience (in case later on I have both salience, memory, and aesthetics models in my environment)
+ - "f" stands for formula
+ - "m" stands for model
+ - "c" stands for complecity
+ - "n" stands for noise
+ - "b" stands for blank space
+ 
+
+## COMPLEXITY MODEL
+```{r complexity}
+s_c_f1.1 <- bf(RT ~ 1 + Complexity + (1 + Complexity | ID) + (1 | Stimulus)) 
+
+s_c_prior <- c(
+           prior(normal(0, .3), class = Intercept),
+           prior(normal(0, .1), class = b),
+           prior(normal(0, .3), class = sd),  
+           prior(lkj(5),      class=cor))
+
+s_c_m1.1_prior <- brm(s_c_f1.1,
+                   family = Gamma(link="log"),
+                   data = dfs,
+                   prior = s_c_prior,
+                   sample_prior = "only",
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS)
+
+pp_check(s_c_m1.1_prior, nsamples = 100)
+
+s_c_m1.1 <- brm(s_c_f1.1,
+                   family = Gamma(link="log"),
+                   data = dfs,
+                   prior = s_c_prior,
+                   sample_prior = TRUE,
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS,
+                   file = "models/salience/s_c_m1.1")
+
+# Summarizing and visualizing results
+# m1.1
+print(summary(s_c_m1.1))
+print(marginal_effects(s_c_m1.1))
+print(hypothesis(s_c_m1.1, "Complexity.L < 0", class = "b"))# We hypothesize a negative relationship between rt and complexity (i.e. faster = more salient, and this speed increases with higher levels of complexity)
+print(hypothesis(s_c_m1.1, "Complexity.Q < 0", class = "b"))
+plot(hypothesis(s_c_m1.1, "Complexity.L < 0", class = "b"))
+plot(hypothesis(s_c_m1.1, "Complexity.Q < 0", class = "b"))
+
+aggregate(dfs$RT, list(dfs$Complexity), FUN=mean) 
+```
+
+
+
+## NOISE MODEL
+```{r noise}
+s_n_f1.1 <- bf(RT ~ 1 + Noise + (1 + Noise | ID) + (1 | Stimulus))
+
+s_n_prior <- c(
+           prior(normal(0, .3), class = Intercept),
+           prior(normal(0, .1), class = b),
+           prior(normal(0, .3), class = sd), 
+           prior(lkj(5),      class=cor))
+
+s_n_m1.1_prior <- brm(s_n_f1.1,
+                   family = Gamma(link="log"),
+                   data = dfs,
+                   prior = s_n_prior,
+                   sample_prior = "only",
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS)
+
+pp_check(s_n_m1.1_prior, nsamples = 100)
+
+s_n_m1.1 <- brm(s_n_f1.1,
+                   family = Gamma(link="log"),
+                   data = dfs,
+                   prior = s_n_prior,
+                   sample_prior = TRUE,
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS,
+                   file = "models/salience/s_n_m1.1")
+
+
+# Summarizing and visualizing results
+# m1.1
+print(summary(s_n_m1.1))
+print(marginal_effects(s_n_m1.1))
+print(hypothesis(s_n_m1.1, "Noise.L > 0", class = "b"))
+print(hypothesis(s_n_m1.1, "Noise.Q > 0", class = "b"))
+plot(hypothesis(s_n_m1.1, "Noise.L > 0", class = "b"))
+plot(hypothesis(s_n_m1.1, "Noise.Q > 0", class = "b"))
+
+aggregate(dfs$RT, list(dfs$Noise), FUN=mean) 
+```
+
+
+```{r Blank Space}
+s_b_f1.1 <- bf(RT ~ 1 + BlankSpace + (1 + BlankSpace | ID) + (1 | Stimulus))
+
+s_b_prior <- c(
+           prior(normal(0, .3), class = Intercept),
+           prior(normal(0, .1), class = b),
+           prior(normal(0, .3), class = sd),  
+           prior(lkj(5),      class=cor))
+
+s_b_m1.1 <- brm(s_b_f1.1,
+                   family = Gamma(link="log"), 
+                   data = dfs,
+                   prior = s_b_prior,
+                   sample_prior = TRUE,
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS,
+                   file = "models/salience/s_b_m1.1")
+
+print(summary(s_b_m1.1))
+print(marginal_effects(s_b_m1.1))
+print(hypothesis(s_b_m1.1, "BlankSpace.L < 0", class = "b"))
+print(hypothesis(s_b_m1.1, "BlankSpace.Q < 0", class = "b"))
+plot(hypothesis(s_b_m1.1, "BlankSpace.L < 0", class = "b"))
+plot(hypothesis(s_b_m1.1, "BlankSpace.Q < 0", class = "b")) #what we see here is that the results correspond with the hypothesis - RT gets lower/faster (i.e. salience increases) with larger areas of blank space. Interesting that we have a positive effect here, but on memorability we have the opposite effect of what we expected - memorywise it may be nice when things "gestalter sammen inde midt på skærmen" making it easier to remember
+
+aggregate(dfs$RT, list(dfs$BlankSpace), FUN=mean) 
+```
+
+
+### Plots of the RT findings
+
+```{r plots}
+
+class(dfs$RT)
+
+dfs$Complexity_num <- as.numeric(dfs$Complexity)
+dfs$Noise_num <- as.numeric(dfs$Noise)
+dfs$BlankSpace_num <- as.numeric(dfs$BlankSpace)
+
+
+# Create summary dataset for visualisation
+exp1_plotSum_c <- dfs %>% group_by(ID, Complexity_num) %>% summarise(
+  rt_sum = mean(RT)
+)
+exp1_plotSum_n <- dfs %>% group_by(ID, Noise_num) %>% summarise(
+  rt_sum = mean(RT)
+)
+exp1_plotSum_b <- dfs %>% group_by(ID, BlankSpace_num) %>% summarise(
+  rt_sum = mean(RT)
+)
+
+
+
+library(pacman)
+
+p_load(extrafont)
+
+font_import(pattern="[T/t]imes")
+
+loadfonts(device="win")
+
+
+
+Exp1_MainPlot_c <- ggplot(exp1_plotSum_c, aes(Complexity_num, rt_sum)) + 
+  geom_line(aes(group=ID,color=ID),alpha=0.6) +
+  geom_point(aes(group=ID,color=ID),alpha=0.6)+
+  geom_smooth(method=lm, color = "red") +
+  scale_color_discrete(guide=FALSE) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  # THEMES
+  theme_grey() +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.position="top",
+    plot.subtitle=element_text(face="italic",size=14,colour="grey40"),
+    plot.title=element_text(size=21,face="bold")) +
+  labs(title="\nExperiment 1",
+       subtitle="Saliency",
+       x=expression("Complexity level"),
+       y=expression("Reaction time")) +
+  NULL
+
+Exp1_MainPlot_n <- ggplot(exp1_plotSum_n, aes(Noise_num, rt_sum)) + 
+  geom_line(aes(group=ID,color=ID),alpha=0.6) +
+  geom_point(aes(group=ID,color=ID),alpha=0.6)+
+  geom_smooth(method=lm, color = "red") +
+  scale_color_discrete(guide=FALSE) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  # THEMES
+  theme_grey() +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.position="top",
+    plot.subtitle=element_text(face="italic",size=14,colour="grey40"),
+    plot.title=element_text(size=21,face="bold")) +
+  labs(title="\nExperiment 1",
+       subtitle="Saliency",
+       x=expression("Noise level"),
+       y=expression("Reaction time")) +
+  NULL
+
+Exp1_MainPlot_b <- ggplot(exp1_plotSum_b, aes(BlankSpace_num, rt_sum)) + 
+  geom_line(aes(group=ID,color=ID),alpha=0.6) +
+  geom_point(aes(group=ID,color=ID),alpha=0.6)+
+  geom_smooth(method=lm, color = "red") +
+  scale_color_discrete(guide=FALSE) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  # THEMES
+  theme_grey() +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.position="top",
+    plot.subtitle=element_text(face="italic",size=14,colour="grey40"),
+    plot.title=element_text(size=21,face="bold")) +
+  labs(title="\nExperiment 1",
+       subtitle="Saliency",
+       x=expression("Blank space level"),
+       y=expression("Reaction time")) +
+  NULL
+
+  
+
+Exp1_MainPlot_c +
+  Exp1_MainPlot_n + 
+  Exp1_MainPlot_b
+
+```
+
+
+
+
+
+
+

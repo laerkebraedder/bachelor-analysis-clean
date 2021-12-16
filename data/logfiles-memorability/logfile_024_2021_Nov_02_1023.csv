@@ -1,0 +1,14 @@
+,TimeStamp,ID,Age,Gender,Language,Stimulus,Orientation,BlankSpace,Complexity,Noise,Reaction_time,Screenshot_name
+0,2021_Nov_02_1023,024,27,male,Danish,stimulus_o1_b1_c3_n1,1,1,3,1,147.64473240000007,screenshots/screenshot_stimulus_o1_b1_c3_n1_024_2021_Nov_02_1023.png
+1,2021_Nov_02_1023,024,27,male,Danish,stimulus_o2_b3_c1_n2,2,3,1,2,90.26234409999961,screenshots/screenshot_stimulus_o2_b3_c1_n2_024_2021_Nov_02_1023.png
+2,2021_Nov_02_1023,024,27,male,Danish,stimulus_o2_b1_c1_n1,2,1,1,1,52.26307380000071,screenshots/screenshot_stimulus_o2_b1_c1_n1_024_2021_Nov_02_1023.png
+3,2021_Nov_02_1023,024,27,male,Danish,stimulus_o1_b3_c3_n3,1,3,3,3,215.294866799999,screenshots/screenshot_stimulus_o1_b3_c3_n3_024_2021_Nov_02_1023.png
+4,2021_Nov_02_1023,024,27,male,Danish,stimulus_o2_b2_c2_n3,2,2,2,3,52.43156260000069,screenshots/screenshot_stimulus_o2_b2_c2_n3_024_2021_Nov_02_1023.png
+5,2021_Nov_02_1023,024,27,male,Danish,stimulus_o1_b3_c3_n1,1,3,3,1,92.9351544000001,screenshots/screenshot_stimulus_o1_b3_c3_n1_024_2021_Nov_02_1023.png
+6,2021_Nov_02_1023,024,27,male,Danish,stimulus_o2_b1_c1_n2,2,1,1,2,26.17882009999994,screenshots/screenshot_stimulus_o2_b1_c1_n2_024_2021_Nov_02_1023.png
+7,2021_Nov_02_1023,024,27,male,Danish,stimulus_o1_b2_c1_n3,1,2,1,3,33.35476579999886,screenshots/screenshot_stimulus_o1_b2_c1_n3_024_2021_Nov_02_1023.png
+8,2021_Nov_02_1023,024,27,male,Danish,stimulus_o2_b3_c1_n1,2,3,1,1,21.74258369999916,screenshots/screenshot_stimulus_o2_b3_c1_n1_024_2021_Nov_02_1023.png
+9,2021_Nov_02_1023,024,27,male,Danish,stimulus_o2_b1_c2_n3,2,1,2,3,37.58770110000114,screenshots/screenshot_stimulus_o2_b1_c2_n3_024_2021_Nov_02_1023.png
+10,2021_Nov_02_1023,024,27,male,Danish,stimulus_o2_b2_c2_n2,2,2,2,2,30.27457610000056,screenshots/screenshot_stimulus_o2_b2_c2_n2_024_2021_Nov_02_1023.png
+11,2021_Nov_02_1023,024,27,male,Danish,stimulus_o1_b1_c1_n3,1,1,1,3,21.507714999999735,screenshots/screenshot_stimulus_o1_b1_c1_n3_024_2021_Nov_02_1023.png
+12,2021_Nov_02_1023,024,27,male,Danish,stimulus_o1_b3_c2_n1,1,3,2,1,60.99497899999915,screenshots/screenshot_stimulus_o1_b3_c2_n1_024_2021_Nov_02_1023.png

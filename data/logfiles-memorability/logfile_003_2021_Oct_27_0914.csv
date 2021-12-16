@@ -1,0 +1,16 @@
+,TimeStamp,ID,Age,Gender,Language,Stimulus,Orientation,BlankSpace,Complexity,Noise,Reaction_time,Screenshot_name
+0,2021_Oct_27_0914,003,22,female,danish,stimulus_o2_b1_c1_n3,2,1,1,3,177.39362370000072,screenshots/screenshot_stimulus_o2_b1_c1_n3_003_2021_Oct_27_0914.png
+1,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b1_c1_n3,1,1,1,3,35.15002359999926,screenshots/screenshot_stimulus_o1_b1_c1_n3_003_2021_Oct_27_0914.png
+2,2021_Oct_27_0914,003,22,female,danish,stimulus_o2_b1_c2_n2,2,1,2,2,28.927873599999657,screenshots/screenshot_stimulus_o2_b1_c2_n2_003_2021_Oct_27_0914.png
+3,2021_Oct_27_0914,003,22,female,danish,stimulus_o2_b1_c3_n1,2,1,3,1,110.80720780000047,screenshots/screenshot_stimulus_o2_b1_c3_n1_003_2021_Oct_27_0914.png
+4,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b3_c3_n1,1,3,3,1,76.4891005999998,screenshots/screenshot_stimulus_o1_b3_c3_n1_003_2021_Oct_27_0914.png
+5,2021_Oct_27_0914,003,22,female,danish,stimulus_o2_b2_c2_n2,2,2,2,2,154.26013550000062,screenshots/screenshot_stimulus_o2_b2_c2_n2_003_2021_Oct_27_0914.png
+6,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b3_c1_n2,1,3,1,2,28.193006999999852,screenshots/screenshot_stimulus_o1_b3_c1_n2_003_2021_Oct_27_0914.png
+7,2021_Oct_27_0914,003,22,female,danish,stimulus_o2_b1_c1_n1,2,1,1,1,19.72646370000075,screenshots/screenshot_stimulus_o2_b1_c1_n1_003_2021_Oct_27_0914.png
+8,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b2_c1_n1,1,2,1,1,22.389952200001062,screenshots/screenshot_stimulus_o1_b2_c1_n1_003_2021_Oct_27_0914.png
+9,2021_Oct_27_0914,003,22,female,danish,stimulus_o2_b2_c3_n2,2,2,3,2,58.1130835999993,screenshots/screenshot_stimulus_o2_b2_c3_n2_003_2021_Oct_27_0914.png
+10,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b2_c1_n2,1,2,1,2,12.137940000000526,screenshots/screenshot_stimulus_o1_b2_c1_n2_003_2021_Oct_27_0914.png
+11,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b1_c2_n1,1,1,2,1,19.80777880000096,screenshots/screenshot_stimulus_o1_b1_c2_n1_003_2021_Oct_27_0914.png
+12,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b1_c1_n1,1,1,1,1,19.108538399999816,screenshots/screenshot_stimulus_o1_b1_c1_n1_003_2021_Oct_27_0914.png
+13,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b3_c1_n3,1,3,1,3,18.88512719999926,screenshots/screenshot_stimulus_o1_b3_c1_n3_003_2021_Oct_27_0914.png
+14,2021_Oct_27_0914,003,22,female,danish,stimulus_o1_b1_c3_n3,1,1,3,3,43.40730220000114,screenshots/screenshot_stimulus_o1_b1_c3_n3_003_2021_Oct_27_0914.png

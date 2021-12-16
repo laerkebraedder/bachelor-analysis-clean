@@ -1,0 +1,392 @@
+---
+title: "Experiment3_Memorability"
+author: "Lærke Brædder"
+date: "04/01/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Load file and data
+
+```{r cars}
+pacman::p_load(tidyverse,brms,ggbeeswarm)
+
+# Loading all the logfiles
+filePaths3 <- list.files("data/logfiles-memorability/", "\\.csv$", full.names = TRUE)
+logfiles <- do.call(rbind, lapply(filePaths3, read.csv))
+# Loading all the image similarity data
+imgSim <- read_csv("data/ImageSimilarityData.csv")
+
+# Renaming the columns to match the logfiles
+imgSim <- imgSim %>% rename(
+  Stimulus = drawing,
+  TimeStamp = time
+)
+
+table(imgSim$ID)
+table(logfiles$ID) #All id's in the imgSim data have one more observation. Probably the practice trial was screenshotted as well in these.
+
+# After the MSR values have been recalculated, they have been dublicated in the data frame, so we have to remove the reoccuring rows of copy name
+imgSim <- imgSim[!duplicated(imgSim$copy),]
+
+class(logfiles$ID)
+imgSim$ID <- as.integer(imgSim$ID) #xxx
+
+# Merging the image similarity data and the logfiles into one big data frame
+dfm <- merge(logfiles, imgSim, by = c("ID", "Stimulus"))
+
+table(dfm$ID) #I can see that the rows that didn't have a match have been omitted, which is good.
+
+class(dfm$ID)
+dfm$ID <- as.factor(dfm$ID)
+dfm$Orientation <- as.factor(dfm$Orientation)
+
+# Removing unnecessary columns
+dfm$X1 <- NULL
+dfm$Screenshot_name <- NULL
+dfm$TimeStamp.y <- NULL
+
+# remove the trials where the participants clicked before recreating any pattern
+dfm <- dfm[dfm$copy != "stimulus_o1_b1_c2_n3_034_2021_Nov_09_1330" & 
+                  dfm$copy != "stimulus_o1_b1_c3_n2_009_2021_Oct_28_1621" &
+                   dfm$copy != "stimulus_o1_b3_c1_n2_014_2021_Oct_29_0932" &
+                   dfm$copy != "stimulus_o1_b3_c1_n2_020_2021_Nov_01_0834" &
+                   dfm$copy != "stimulus_o1_b3_c3_n1_034_2021_Nov_09_1331", ] 
+
+# Changing the class of the compositional levels to ordered
+dfm$Complexity <- ordered(dfm$Complexity)
+dfm$Noise <- ordered(dfm$Noise)
+dfm$BlankSpace <- ordered(dfm$BlankSpace)
+
+# Transform MSE so that it is on a 0-1 scale
+dfm$MSE_1 = dfm$MSE - min(dfm$MSE)
+dfm$MSE_1 = dfm$MSE_1 / max(dfm$MSE)
+
+```
+
+```{r small demographic analyses}
+mean(table(dfm$Stimulus))
+min(table(dfm$Stimulus))# Each stimulus appears an average of 15 times, and no Stimulus is showed less than 11 times. This is backing for using Stimulus as random intercept to account for repeated measures.
+
+# Mean age of the participants:
+mean(dfm$Age) #27.37 years old
+
+# Number of males and females in the study:
+table(dfm$Gender)
+
+# xxx nmales and nfemales?
+```
+
+
+
+## Run analyses
+
+Outcome variable:
+ - Scales MSE
+
+Predictor variables:
+ - Complexity
+ - Noise
+ - Blank space
+
+Random effects options:
+ - Complexity, noise, blank space (slope)
+ - ID (intercept)
+ - Stimulus (intercept)
+
+
+# 1. Numeric vs ordered models. Transformed MSE (option 1)
+```{r ordered - complexity}
+CHAINS = 2
+ITER = 4000
+CONTROLS = list(
+  max_treedepth = 20,
+  adapt_delta=0.999
+  )
+
+m_c_f2.1 <- bf(MSE_1 ~ 1 + Complexity + (1 + Complexity | ID) + (1 | Stimulus))
+
+get_prior(m_c_f2.1, dfm)
+
+m_c_prior1 <- c(
+  prior(normal(0,.3), class = Intercept),
+  prior(normal(0,.1), class = b),
+  prior(normal(0,.05), class = sd),
+  prior(lkj(5), class = cor)
+)
+
+#Prior model
+m_c_m2.1_prior <- brm(m_c_f2.1,
+             data = dfm,
+             family = gaussian,
+             prior = m_c_prior1,
+             sample_prior = "only",
+                   chains=CHAINS,cores=CHAINS,
+                   iter=ITER,
+                   control = CONTROLS,
+             file = "models/memorability/m_c_m2.1_prior"
+             )
+
+
+# prior predictive check
+pp_check(m_c_m2.1_prior, nsamples=30)
+y_pred_c_m2.1 <- posterior_linpred(m_c_m2.1_prior)
+dens(inv_logit(y_pred_c_m2.1))
+
+# Real model
+m_c_m2.1 <- brm(m_c_f2.1,
+             data = dfm,
+             family = gaussian,
+             prior = m_c_prior1,
+             sample_prior = TRUE,
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS,
+             file = "models/memorability/m_c_m2.1"
+             )
+
+print(summary(m_c_m2.1))
+print(marginal_effects(m_c_m2.1))
+print(hypothesis(m_c_m2.1, "Complexity.L > 0", class = "b"))
+print(hypothesis(m_c_m2.1, "Complexity.Q > 0", class = "b"))
+plot(hypothesis(m_c_m2.1, "Complexity.L > 0", class = "b"))
+plot(hypothesis(m_c_m2.1, "Complexity.Q > 0", class = "b"))
+
+aggregate(dfm$MSE, list(dfm$Complexity), FUN=mean) 
+```
+
+
+
+# Noise
+```{r Noise models}
+m_n_f2.1 <- bf(MSE_1 ~ 1 + Noise + (1 + Noise | ID) + (1 | Stimulus)) 
+
+#Prior model
+m_n_m2.1_prior <- brm(m_n_f2.1,
+             data = dfm,
+             family = gaussian,
+             prior = m_c_prior1,
+             sample_prior = "only",
+                   chains=CHAINS,cores=CHAINS,
+                   iter=ITER,
+                   control = CONTROLS,
+             file = "models/memorability/m_n_m2.1_prior"
+             )
+
+# prior predictive check
+pp_check(m_n_m2.1_prior, nsamples=30)
+y_pred_n_m2.1 <- posterior_linpred(m_n_m2.1_prior)
+dens(inv_logit(y_pred_n_m2.1))
+
+# model
+m_n_m2.1 <- brm(m_n_f2.1,
+             data = dfm,
+             family = gaussian,
+             prior = m_c_prior1,
+             sample_prior = TRUE,
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS,
+             file = "models/memorability/m_n_m2.1"
+             )
+
+print(summary(m_n_m2.1))
+print(marginal_effects(m_n_m2.1))
+print(hypothesis(m_n_m2.1, "Noise.L > 0", class = "b"))
+print(hypothesis(m_n_m2.1, "Noise.Q > 0", class = "b"))
+plot(hypothesis(m_n_m2.1, "Noise.L > 0", class = "b"))
+plot(hypothesis(m_n_m2.1, "Noise.Q > 0", class = "b"))
+#####
+print(hypothesis(m_n_m2.1, "Noise.L < 0", class = "b"))
+print(hypothesis(m_n_m2.1, "Noise.Q < 0", class = "b"))
+plot(hypothesis(m_n_m2.1, "Noise.L < 0", class = "b"))
+plot(hypothesis(m_n_m2.1, "Noise.Q < 0", class = "b"))
+
+aggregate(dfm$MSE, list(dfm$Noise), FUN=mean) 
+```
+
+
+# Blank Space
+```{r Blank Space models}
+m_b_f2.1 <- bf(MSE_1 ~ 1 + BlankSpace + (1 + BlankSpace | ID) + (1 | Stimulus))
+
+#Prior model
+m_b_m2.1_prior <- brm(m_b_f2.1,
+             data = dfm,
+             family = gaussian,
+             prior = m_c_prior1,
+             sample_prior = "only",
+                   chains=CHAINS,cores=CHAINS,
+                   iter=ITER,
+                   control = CONTROLS,
+             file = "models/memorability/m_b_m2.1_prior"
+             )
+
+
+# prior predictive check
+pp_check(m_b_m2.1_prior, nsamples=30)
+y_pred_b_m2.1 <- posterior_linpred(m_b_m2.1_prior)
+dens(inv_logit(y_pred_b_m2.1))
+
+# model
+m_b_m2.1 <- brm(m_b_f2.1,
+             data = dfm,
+             family = gaussian,
+             prior = m_b_prior1,
+             sample_prior = TRUE,
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS,
+             file = "models/memorability/m_b_m2.1"
+             )
+
+
+print(summary(m_b_m2.1))
+print(marginal_effects(m_b_m2.1))
+print(hypothesis(m_b_m2.1, "BlankSpace.L < 0", class = "b"))
+print(hypothesis(m_b_m2.1, "BlankSpace.Q < 0", class = "b"))
+plot(hypothesis(m_b_m2.1, "BlankSpace.L < 0", class = "b"))
+plot(hypothesis(m_b_m2.1, "BlankSpace.Q < 0", class = "b"))
+######
+print(summary(m_b_m2.1))
+print(marginal_effects(m_b_m2.1))
+print(hypothesis(m_b_m2.1, "BlankSpace.L > 0", class = "b"))
+print(hypothesis(m_b_m2.1, "BlankSpace.Q > 0", class = "b"))
+plot(hypothesis(m_b_m2.1, "BlankSpace.L > 0", class = "b"))
+plot(hypothesis(m_b_m2.1, "BlankSpace.Q > 0", class = "b"))
+
+aggregate(dfm$MSE, list(dfm$BlankSpace), FUN=mean) 
+```
+
+
+
+
+
+
+## Plots
+
+```{r Orientation effect check plots}
+
+ggplot(dfm, aes(Complexity, MSE, color = Orientation)) + 
+  geom_point() +
+  geom_smooth(method = lm)
+
+ggplot(dfm, aes(Noise, MSE, color = Orientation)) + 
+  geom_point() +
+  geom_smooth(method = lm)
+
+ggplot(dfm, aes(BlankSpace, MSE, color = Orientation)) + 
+  geom_point() +
+  geom_smooth(method = lm)
+```
+
+
+
+```{r Main plots}
+class(dfm$MSE)
+
+dfm$Complexity_num <- as.numeric(dfm$Complexity)
+dfm$Noise_num <- as.numeric(dfm$Noise)
+dfm$BlankSpace_num <- as.numeric(dfm$BlankSpace)
+
+
+# Create summary dataset for visualisation
+exp3_plotSum_c <- dfm %>% group_by(ID, Complexity_num) %>% summarise(
+  MSE_sum = mean(MSE)
+)
+exp3_plotSum_n <- dfm %>% group_by(ID, Noise_num) %>% summarise(
+  MSE_sum = mean(MSE)
+)
+exp3_plotSum_b <- dfm %>% group_by(ID, BlankSpace_num) %>% summarise(
+  MSE_sum = mean(MSE)
+)
+
+
+
+library(pacman)
+
+p_load(extrafont)
+
+font_import(pattern="[T/t]imes")
+
+loadfonts(device="win")
+
+
+Exp3_MainPlot_c <- ggplot(exp3_plotSum_c, aes(Complexity_num, MSE_sum)) + 
+  geom_line(aes(group=ID,color=ID),alpha=0.6) +
+  geom_point(aes(group=ID,color=ID),alpha=0.6)+
+  geom_smooth(method=lm, color = "red") +
+  scale_color_discrete(guide=FALSE) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  # THEMES
+  theme_grey() +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.position="top",
+    plot.subtitle=element_text(face="italic",size=14,colour="grey40"),
+    plot.title=element_text(size=21,face="bold")) +
+  labs(title="\nExperiment 3",
+       subtitle="Memorability",
+       x=expression("Complexity level"),
+       y=expression("MSE")) +
+  NULL
+
+Exp3_MainPlot_n <- ggplot(exp3_plotSum_n, aes(Noise_num, MSE_sum)) + 
+  geom_line(aes(group=ID,color=ID),alpha=0.6) +
+  geom_point(aes(group=ID,color=ID),alpha=0.6)+
+  geom_smooth(method=lm, color = "red") +
+  scale_color_discrete(guide=FALSE) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  # THEMES
+  theme_grey() +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.position="top",
+    plot.subtitle=element_text(face="italic",size=14,colour="grey40"),
+    plot.title=element_text(size=21,face="bold")) +
+  labs(title="\nExperiment 3",
+       subtitle="Memorability",
+       x=expression("Noise level"),
+       y=expression("MSE")) +
+  NULL
+
+Exp3_MainPlot_b <- ggplot(exp3_plotSum_b, aes(BlankSpace_num, MSE_sum)) + 
+  geom_line(aes(group=ID,color=ID),alpha=0.6) +
+  geom_point(aes(group=ID,color=ID),alpha=0.6)+
+  geom_smooth(method=lm, color = "red") +
+  scale_color_discrete(guide=FALSE) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  # THEMES
+  theme_grey() +
+  theme(
+    text = element_text(family = "Times New Roman"),
+    legend.position="top",
+    plot.subtitle=element_text(face="italic",size=14,colour="grey40"),
+    plot.title=element_text(size=21,face="bold")) +
+  labs(title="\nExperiment 3",
+       subtitle="Memorability",
+       x=expression("Blank space level"),
+       y=expression("MSE")) +
+  NULL
+
+  
+Exp1_MainPlot_c +
+  Exp1_MainPlot_n + 
+  Exp1_MainPlot_b
+
+Exp2_MainPlot_c +
+  Exp2_MainPlot_n + 
+  Exp2_MainPlot_b
+
+Exp3_MainPlot_c +
+  Exp3_MainPlot_n + 
+  Exp3_MainPlot_b
+
+```
+
+
