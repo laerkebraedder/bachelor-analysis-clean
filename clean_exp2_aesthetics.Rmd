@@ -480,3 +480,56 @@ Exp2_MainPlot_c +
 
 ```
 
+
+```{r Orientation}
+
+# Create summary dataset for visualisation of orientation effects
+plotSum_c2 <- dfa_c %>% group_by(ID, DistanceC_num, OrientationL) %>% summarise(
+  LeftChoice = mean(ResponseL_num)
+)
+plotSum_n2 <- dfa_n %>% group_by(ID, DistanceN_num, OrientationL) %>% summarise(
+  LeftChoice = mean(ResponseL_num)
+)
+plotSum_b2 <- dfa_b %>% group_by(ID, DistanceB_num, OrientationL) %>% summarise(
+  LeftChoice = mean(ResponseL_num)
+)
+
+plotSum_c2$OrientationL <- as.factor(plotSum_c2$OrientationL)
+plotSum_n2$OrientationL <- as.factor(plotSum_n2$OrientationL)
+plotSum_b2$OrientationL <- as.factor(plotSum_b2$OrientationL)
+
+
+#plots
+ggplot(plotSum_c2, aes(DistanceC_num, LeftChoice, color = OrientationL)) + 
+  geom_point()+
+  geom_smooth(method=lm) +
+  scale_x_continuous(labels=c("-2","-1", "1", "2")) + 
+  labs(title="\nExperiment 2",
+       subtitle="Aesthetics",
+       x=expression("Complexity distance"),
+       y=expression("Rate of choosing the left stimulus"))
+
+
+ggplot(plotSum_n2, aes(DistanceN_num, LeftChoice, color = OrientationL)) + 
+  geom_point()+
+  geom_smooth(method=lm) +
+  scale_x_continuous(labels=c("-2","-1", "1", "2")) + 
+  labs(title="\nExperiment 2",
+       subtitle="Aesthetics",
+       x=expression("Noise distance"),
+       y=expression("Rate of choosing the left stimulus"))
+
+
+ggplot(plotSum_b2, aes(DistanceB_num, LeftChoice, color = OrientationL)) + 
+  geom_point()+
+  geom_smooth(method=lm) +
+  scale_x_continuous(labels=c("-2","-1", "1", "2")) + 
+  labs(title="\nExperiment 2",
+       subtitle="Aesthetics",
+       x=expression("Blank space distance"),
+       y=expression("Rate of choosing the left stimulus"))
+```
+
+
+
+

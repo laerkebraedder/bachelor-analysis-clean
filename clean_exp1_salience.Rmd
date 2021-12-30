@@ -25,6 +25,25 @@ pacman::p_load(tidyverse,
 filePaths1 <- list.files("data/logfiles-salience/", "\\.csv$", full.names = TRUE)
 dfs <- do.call(rbind, lapply(filePaths1, read.csv))
 
+
+table(dfs$ID)
+
+# Males and females
+data_count <- aggregate(data = dfs,
+                          ID ~ Gender,
+                          function(ID) length(unique(ID)))
+data_count
+
+# Age
+agetable <- dfs %>%
+  group_by(ID) %>%
+  filter(row_number()==1)
+mean(agetable$Age)
+sd(agetable$Age)
+
+
+
+
 # Cleaning the data up a little:
 dfs <- dfs %>% rename(RT = Reaction_time) #Renaming the reaction time variable to RT
 dfs <- subset(dfs, RT > 0.2) # Removing impossibly fast rt's.
@@ -38,7 +57,6 @@ dfs <- subset(dfs, ID != 017)
 dfs$Complexity <- ordered(dfs$Complexity) 
 dfs$Noise <- ordered(dfs$Noise)
 dfs$BlankSpace <- ordered(dfs$BlankSpace)
-
 
 mean(table(dfs$Stimulus))
 min(table(dfs$Stimulus))# Each stimulus appears an average of 80.5 times, and no Stimulus is showed less than 79 times. This is backing for using Stimulus as random intercept to account for repeated measures.
