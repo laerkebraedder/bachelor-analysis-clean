@@ -19,7 +19,8 @@ pacman::p_load(tidyverse,
                brms,
                fitdistrplus, # xxx Double check if you actually need these last three. What do they do?
                ggbeeswarm,
-               svglite)
+               svglite,
+               patchwork)
 
 # Loading the logfiles and binding them into one big data frame:
 filePaths1 <- list.files("data/logfiles-salience/", "\\.csv$", full.names = TRUE)
@@ -104,6 +105,9 @@ s_c_m1.1 <- brm(s_c_f1.1,
                    control = CONTROLS,
                    file = "models/salience/s_c_m1.1")
 
+pp_check(s_c_m1.1_prior, nsamples = 100) +
+  pp_check(s_c_m1.1, nsamples = 100)
+
 # Summarizing and visualizing results
 # m1.1
 print(summary(s_c_m1.1))
@@ -112,6 +116,8 @@ print(hypothesis(s_c_m1.1, "Complexity.L < 0", class = "b"))# We hypothesize a n
 print(hypothesis(s_c_m1.1, "Complexity.Q < 0", class = "b"))
 plot(hypothesis(s_c_m1.1, "Complexity.L < 0", class = "b"))
 plot(hypothesis(s_c_m1.1, "Complexity.Q < 0", class = "b"))
+
+plot(s_c_m1.1)
 
 aggregate(dfs$RT, list(dfs$Complexity), FUN=mean) 
 ```
@@ -149,6 +155,8 @@ s_n_m1.1 <- brm(s_n_f1.1,
                    control = CONTROLS,
                    file = "models/salience/s_n_m1.1")
 
+pp_check(s_n_m1.1_prior, nsamples = 100) +
+  pp_check(s_n_m1.1, nsamples = 100)
 
 # Summarizing and visualizing results
 # m1.1
@@ -158,6 +166,8 @@ print(hypothesis(s_n_m1.1, "Noise.L > 0", class = "b"))
 print(hypothesis(s_n_m1.1, "Noise.Q > 0", class = "b"))
 plot(hypothesis(s_n_m1.1, "Noise.L > 0", class = "b"))
 plot(hypothesis(s_n_m1.1, "Noise.Q > 0", class = "b"))
+
+plot(s_n_m1.1)
 
 aggregate(dfs$RT, list(dfs$Noise), FUN=mean) 
 ```
@@ -172,6 +182,17 @@ s_b_prior <- c(
            prior(normal(0, .3), class = sd),  
            prior(lkj(5),      class=cor))
 
+s_b_m1.1_prior <- brm(s_b_f1.1,
+                   family = Gamma(link="log"),
+                   data = dfs,
+                   prior = s_b_prior,
+                   sample_prior = "only",
+                   chains = CHAINS,cores=CHAINS,
+                   iter = ITER,
+                   control = CONTROLS)
+
+pp_check(s_b_m1.1_prior, nsamples = 100)
+
 s_b_m1.1 <- brm(s_b_f1.1,
                    family = Gamma(link="log"), 
                    data = dfs,
@@ -182,12 +203,17 @@ s_b_m1.1 <- brm(s_b_f1.1,
                    control = CONTROLS,
                    file = "models/salience/s_b_m1.1")
 
+pp_check(s_b_m1.1_prior, nsamples = 100) +
+  pp_check(s_b_m1.1, nsamples = 100)
+
 print(summary(s_b_m1.1))
 print(marginal_effects(s_b_m1.1))
 print(hypothesis(s_b_m1.1, "BlankSpace.L < 0", class = "b"))
 print(hypothesis(s_b_m1.1, "BlankSpace.Q < 0", class = "b"))
 plot(hypothesis(s_b_m1.1, "BlankSpace.L < 0", class = "b"))
 plot(hypothesis(s_b_m1.1, "BlankSpace.Q < 0", class = "b")) #what we see here is that the results correspond with the hypothesis - RT gets lower/faster (i.e. salience increases) with larger areas of blank space. Interesting that we have a positive effect here, but on memorability we have the opposite effect of what we expected - memorywise it may be nice when things "gestalter sammen inde midt på skærmen" making it easier to remember
+
+plot(s_b_m1.1)
 
 aggregate(dfs$RT, list(dfs$BlankSpace), FUN=mean) 
 ```
@@ -214,16 +240,6 @@ exp1_plotSum_n <- dfs %>% group_by(ID, Noise_num) %>% summarise(
 exp1_plotSum_b <- dfs %>% group_by(ID, BlankSpace_num) %>% summarise(
   rt_sum = mean(RT)
 )
-
-
-
-library(pacman)
-
-p_load(extrafont)
-
-font_import(pattern="[T/t]imes")
-
-loadfonts(device="win")
 
 
 
@@ -293,6 +309,53 @@ Exp1_MainPlot_c +
 ```
 
 
+```{r orientation}
+
+# Create summary dataset for visualisation
+exp1_plotSum_c2 <- dfs %>% group_by(ID, Complexity_num, Orientation) %>% summarise(
+  rt_sum = mean(RT)
+)
+exp1_plotSum_n2 <- dfs %>% group_by(ID, Noise_num, Orientation) %>% summarise(
+  rt_sum = mean(RT)
+)
+exp1_plotSum_b2 <- dfs %>% group_by(ID, BlankSpace_num, Orientation) %>% summarise(
+  rt_sum = mean(RT)
+)
+
+
+exp1_plotSum_c2$Orientation <- as.factor(exp1_plotSum_c2$Orientation)
+exp1_plotSum_n2$Orientation <- as.factor(exp1_plotSum_n2$Orientation)
+exp1_plotSum_b2$Orientation <- as.factor(exp1_plotSum_b2$Orientation)
+
+
+ggplot(exp1_plotSum_c2, aes(Complexity_num, rt_sum, color = Orientation)) + 
+  geom_point()+
+  geom_smooth(method=lm) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  labs(title="\nExperiment 1",
+       subtitle="Saliency",
+       x=expression("Complexity"),
+       y=expression("Reaction time"))
+
+ggplot(exp1_plotSum_n2, aes(Noise_num, rt_sum, color = Orientation)) + 
+  geom_point()+
+  geom_smooth(method=lm) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  labs(title="\nExperiment 1",
+       subtitle="Saliency",
+       x=expression("Noise"),
+       y=expression("Reaction time"))
+
+ggplot(exp1_plotSum_b2, aes(BlankSpace_num, rt_sum, color = Orientation)) + 
+  geom_point()+
+  geom_smooth(method=lm) +
+  scale_x_continuous(breaks = c(1, 2, 3),labels=c("Low", "Medium", "High")) +
+  labs(title="\nExperiment 1",
+       subtitle="Saliency",
+       x=expression("Blank space"),
+       y=expression("Reaction time"))
+
+```
 
 
 

@@ -134,7 +134,7 @@ m_c_m2.1_prior <- brm(m_c_f2.1,
 
 
 # prior predictive check
-pp_check(m_c_m2.1_prior, nsamples=30)
+pp_check(m_c_m2.1_prior, nsamples=100)
 y_pred_c_m2.1 <- posterior_linpred(m_c_m2.1_prior)
 dens(inv_logit(y_pred_c_m2.1))
 
@@ -150,12 +150,18 @@ m_c_m2.1 <- brm(m_c_f2.1,
              file = "models/memorability/m_c_m2.1"
              )
 
+#Predictive checks
+pp_check(m_c_m2.1_prior, nsamples=100) + 
+  pp_check(m_c_m2.1, nsamples=100)
+
 print(summary(m_c_m2.1))
 print(marginal_effects(m_c_m2.1))
 print(hypothesis(m_c_m2.1, "Complexity.L > 0", class = "b"))
 print(hypothesis(m_c_m2.1, "Complexity.Q > 0", class = "b"))
 plot(hypothesis(m_c_m2.1, "Complexity.L > 0", class = "b"))
 plot(hypothesis(m_c_m2.1, "Complexity.Q > 0", class = "b"))
+
+plot(m_c_m2.1)
 
 aggregate(dfm$MSE, list(dfm$Complexity), FUN=mean) 
 ```
@@ -179,7 +185,7 @@ m_n_m2.1_prior <- brm(m_n_f2.1,
              )
 
 # prior predictive check
-pp_check(m_n_m2.1_prior, nsamples=30)
+pp_check(m_n_m2.1_prior, nsamples=100)
 y_pred_n_m2.1 <- posterior_linpred(m_n_m2.1_prior)
 dens(inv_logit(y_pred_n_m2.1))
 
@@ -195,6 +201,10 @@ m_n_m2.1 <- brm(m_n_f2.1,
              file = "models/memorability/m_n_m2.1"
              )
 
+#Predictive checks
+pp_check(m_n_m2.1_prior, nsamples=100) + 
+  pp_check(m_n_m2.1, nsamples=100)
+
 print(summary(m_n_m2.1))
 print(marginal_effects(m_n_m2.1))
 print(hypothesis(m_n_m2.1, "Noise.L > 0", class = "b"))
@@ -206,6 +216,8 @@ print(hypothesis(m_n_m2.1, "Noise.L < 0", class = "b"))
 print(hypothesis(m_n_m2.1, "Noise.Q < 0", class = "b"))
 plot(hypothesis(m_n_m2.1, "Noise.L < 0", class = "b"))
 plot(hypothesis(m_n_m2.1, "Noise.Q < 0", class = "b"))
+
+plot(m_n_m2.1)
 
 aggregate(dfm$MSE, list(dfm$Noise), FUN=mean) 
 ```
@@ -229,7 +241,7 @@ m_b_m2.1_prior <- brm(m_b_f2.1,
 
 
 # prior predictive check
-pp_check(m_b_m2.1_prior, nsamples=30)
+pp_check(m_b_m2.1_prior, nsamples=100)
 y_pred_b_m2.1 <- posterior_linpred(m_b_m2.1_prior)
 dens(inv_logit(y_pred_b_m2.1))
 
@@ -245,6 +257,9 @@ m_b_m2.1 <- brm(m_b_f2.1,
              file = "models/memorability/m_b_m2.1"
              )
 
+#Predictive checks
+pp_check(m_b_m2.1_prior, nsamples=100) + 
+  pp_check(m_b_m2.1, nsamples=100)
 
 print(summary(m_b_m2.1))
 print(marginal_effects(m_b_m2.1))
@@ -260,6 +275,8 @@ print(hypothesis(m_b_m2.1, "BlankSpace.Q > 0", class = "b"))
 plot(hypothesis(m_b_m2.1, "BlankSpace.L > 0", class = "b"))
 plot(hypothesis(m_b_m2.1, "BlankSpace.Q > 0", class = "b"))
 
+plot(m_b_m2.1)
+
 aggregate(dfm$MSE, list(dfm$BlankSpace), FUN=mean) 
 ```
 
@@ -269,22 +286,6 @@ aggregate(dfm$MSE, list(dfm$BlankSpace), FUN=mean)
 
 
 ## Plots
-
-```{r Orientation effect check plots}
-
-ggplot(dfm, aes(Complexity, MSE, color = Orientation)) + 
-  geom_point() +
-  geom_smooth(method = lm)
-
-ggplot(dfm, aes(Noise, MSE, color = Orientation)) + 
-  geom_point() +
-  geom_smooth(method = lm)
-
-ggplot(dfm, aes(BlankSpace, MSE, color = Orientation)) + 
-  geom_point() +
-  geom_smooth(method = lm)
-```
-
 
 
 ```{r Main plots}
@@ -389,4 +390,27 @@ Exp3_MainPlot_c +
 
 ```
 
+
+```{r Orientation}
+df <- read_csv("data/ImageSimilarityData.csv")
+
+ggplot(df, aes(complex, MSE, color = orientation)) + 
+  geom_point() +
+  geom_smooth(method = lm) + 
+  labs(title="\nExperiment 3",
+       subtitle="Memorability",
+       x=expression("Complexity"),
+       y=expression("MSE"))
+
+ggplot(df, aes(noise, MSE, color = orientation)) + 
+  geom_point() +
+  geom_smooth(method = lm) + 
+  labs(x = "Noise")
+
+ggplot(df, aes(blank, MSE, color = orientation)) + 
+  geom_point() +
+  geom_smooth(method = lm) + 
+  labs(x = "Blank Space")
+
+```
 

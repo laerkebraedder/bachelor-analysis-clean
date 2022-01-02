@@ -213,10 +213,9 @@ a_c_m1 <- brm(
 )
 
 
-# prior predictive checks
-pp_check(a_c_m1, nsamples=100)
-y_pred1 <- posterior_linpred(a_c_m1)  
-dens(inv_logit(y_pred1))
+#Predictive checks
+pp_check(a_c_m1, nsamples=100) + 
+  pp_check(a_c_m1_prior, nsamples=100)
 
 
 ## Model results
@@ -290,6 +289,9 @@ a_n_m1 <- brm(
    file = "models/aesthetics/a_n_m1"
 )
 
+#Predictive checks
+pp_check(a_n_m1, nsamples=100) + 
+  pp_check(a_n_m1_prior, nsamples=100)
 
 ## Model results
 #model 1
@@ -352,6 +354,10 @@ a_b_m1 <- brm(
    iter = ITER,
    file = "models/aesthetics/a_b_m1"
 )
+
+#Predictive checks
+pp_check(a_b_m1_prior, nsamples=100) + 
+  pp_check(a_b_m1, nsamples=100)
 
 ## Model results
 #model 1
@@ -500,7 +506,7 @@ plotSum_b2$OrientationL <- as.factor(plotSum_b2$OrientationL)
 
 
 #plots
-ggplot(plotSum_c2, aes(DistanceC_num, LeftChoice, color = OrientationL)) + 
+ao1 <- ggplot(plotSum_c2, aes(DistanceC_num, LeftChoice, color = OrientationL)) + 
   geom_point()+
   geom_smooth(method=lm) +
   scale_x_continuous(labels=c("-2","-1", "1", "2")) + 
@@ -510,7 +516,7 @@ ggplot(plotSum_c2, aes(DistanceC_num, LeftChoice, color = OrientationL)) +
        y=expression("Rate of choosing the left stimulus"))
 
 
-ggplot(plotSum_n2, aes(DistanceN_num, LeftChoice, color = OrientationL)) + 
+ao2 <- ggplot(plotSum_n2, aes(DistanceN_num, LeftChoice, color = OrientationL)) + 
   geom_point()+
   geom_smooth(method=lm) +
   scale_x_continuous(labels=c("-2","-1", "1", "2")) + 
@@ -520,7 +526,7 @@ ggplot(plotSum_n2, aes(DistanceN_num, LeftChoice, color = OrientationL)) +
        y=expression("Rate of choosing the left stimulus"))
 
 
-ggplot(plotSum_b2, aes(DistanceB_num, LeftChoice, color = OrientationL)) + 
+ao3 <- ggplot(plotSum_b2, aes(DistanceB_num, LeftChoice, color = OrientationL)) + 
   geom_point()+
   geom_smooth(method=lm) +
   scale_x_continuous(labels=c("-2","-1", "1", "2")) + 
@@ -528,6 +534,10 @@ ggplot(plotSum_b2, aes(DistanceB_num, LeftChoice, color = OrientationL)) +
        subtitle="Aesthetics",
        x=expression("Blank space distance"),
        y=expression("Rate of choosing the left stimulus"))
+
+ao1 + 
+  ao2 + 
+  ao3
 ```
 
 
