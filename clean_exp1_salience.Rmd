@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(tidyverse,
                lmerTest,
                brms,
-               fitdistrplus, # xxx Double check if you actually need these last three. What do they do?
+               fitdistrplus,
                ggbeeswarm,
                svglite,
                patchwork)

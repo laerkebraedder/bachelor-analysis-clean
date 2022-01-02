@@ -230,7 +230,7 @@ plot(hypothesis(a_c_m1, "DistanceC.Q > 0", class = "b"))
 
 print(hypothesis(a_c_m1, "DistanceC.L < 0", class = "b"))
 print(hypothesis(a_c_m1, "DistanceC.Q < 0", class = "b"))
-plot(hypothesis(a_c_m1, "DistanceC.L < 0", class = "b")) #the more complex the less aesthetic. the prob of choosing left goes up when it is lower level of complexity than right. DistanceC is a measure of how much higher on complexity Left is than right. This says that when left is mich higher on complexity than right, the probability of choosing left goes down significantly. I.e. people are more likely to choose the less complex image (xxx is this correct?)
+plot(hypothesis(a_c_m1, "DistanceC.L < 0", class = "b")) #the more complex the less aesthetic. the prob of choosing left goes up when it is lower level of complexity than right. DistanceC is a measure of how much higher on complexity Left is than right. This says that when left is mich higher on complexity than right, the probability of choosing left goes down significantly. I.e. people are more likely to choose the less complex image
 plot(hypothesis(a_c_m1, "DistanceC.Q < 0", class = "b"))
 
 plot(a_c_m1) #trace plot

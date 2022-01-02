@@ -35,7 +35,7 @@ table(logfiles$ID) #All id's in the imgSim data have one more observation. Proba
 imgSim <- imgSim[!duplicated(imgSim$copy),]
 
 class(logfiles$ID)
-imgSim$ID <- as.integer(imgSim$ID) #xxx
+imgSim$ID <- as.integer(imgSim$ID)
 
 # Merging the image similarity data and the logfiles into one big data frame
 dfm <- merge(logfiles, imgSim, by = c("ID", "Stimulus"))
@@ -79,7 +79,6 @@ mean(dfm$Age) #27.37 years old
 # Number of males and females in the study:
 table(dfm$Gender)
 
-# xxx nmales and nfemales?
 ```
 
 
